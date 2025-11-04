@@ -6386,6 +6386,77 @@ def addFeatures():
                     # else:
                     # print "oasis failed random check"
 
+    # After features, fix isolated coast-adjacent land tiles blocked by a single peak
+    fixIsolatedCoastalTiles()
+    return
+
+
+def fixIsolatedCoastalTiles():
+    gc = CyGlobalContext()
+    mmap = gc.getMap()
+    width = mc.width
+    height = mc.height
+
+    def wrapped_x(x):
+        if x == -1:
+            return width - 1
+        if x == width:
+            return 0
+        return x
+
+    # Check all plots; if a land, non-peak plot has no passable (non-peak land) in
+    # the 4 cardinal directions, try converting one adjacent peak to a hill to open access.
+    for y in range(height):
+        for x in range(width):
+            plot = mmap.plot(x, y)
+            if plot is None:
+                continue
+            if plot.isWater() or plot.isPeak():
+                continue
+
+            # Determine if there is any passable land in 4-cardinal neighbors
+            has_passable_cardinal = False
+            neighbor_peaks = []
+            card_dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]  # N, S, E, W
+            for dx, dy in card_dirs:
+                nx = wrapped_x(x + dx)
+                ny = y + dy
+                if ny < 0 or ny >= height:
+                    continue
+                nplot = mmap.plot(nx, ny)
+                if nplot is None:
+                    continue
+                if not nplot.isWater() and not nplot.isPeak():
+                    has_passable_cardinal = True
+                    break
+                if nplot.isPeak():
+                    neighbor_peaks.append((nx, ny, dx, dy))
+
+            if has_passable_cardinal or not neighbor_peaks:
+                continue
+
+            # Prefer opening a corridor through a peak that leads directly to passable land 2 tiles away
+            chosen_peak = None
+            for nx, ny, dx, dy in neighbor_peaks:
+                tx = wrapped_x(nx + dx)
+                ty = ny + dy
+                if 0 <= ty < height:
+                    tplot = mmap.plot(tx, ty)
+                    if tplot is not None and not tplot.isWater() and not tplot.isPeak():
+                        chosen_peak = (nx, ny)
+                        break
+
+            # Fallback: just take the first peak neighbor
+            if chosen_peak is None:
+                chosen_peak = (neighbor_peaks[0][0], neighbor_peaks[0][1])
+
+            px, py = chosen_peak
+            pplot = mmap.plot(px, py)
+            if pplot is not None and pplot.isPeak():
+                pplot.setPlotType(PlotTypes.PLOT_HILLS, True, True)
+                ii = GetIndex(px, py)
+                sm.plotMap[ii] = mc.HILLS
+
     return
 
 
