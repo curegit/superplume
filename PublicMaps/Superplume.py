@@ -5721,13 +5721,74 @@ def normalizeRemoveBadFeatures():
 def normalizeAddFoodBonuses():
     return
 
+def fixIsolatedSeaResourceTiles():
+    """
+    全ピークをループして、海に隣接かつ周囲2マス以内に海産資源がある場合、
+    そのピークを丘陵に変換して資源へのアクセスを確保する。
+    """
+    gc = CyGlobalContext()
+    mmap = gc.getMap()
+    width = mc.width
+    height = mc.height
+
+    def wrapped_x(x):
+        if x == -1:
+            return width - 1
+        if x == width:
+            return 0
+        return x
+
+    # 周囲2マス以内をチェックするためのオフセット（チェビシェフ距離2マス以内、ただし対角は除外）
+    check_offsets = []
+    for dx in range(-2, 3):
+        for dy in range(-2, 3):
+            if dx == 0 and dy == 0:
+                continue
+            if abs(dx) + abs(dy) == 2:
+                continue
+            check_offsets.append((dx, dy))
+
+    for y in range(height):
+        for x in range(width):
+            plot = mmap.plot(x, y)
+            if plot is None:
+                continue
+            if not plot.isPeak():
+                continue
+
+            # 周囲2マス以内に海産資源があるかチェック
+            has_sea_resource = False
+            for dx, dy in check_offsets:
+                nx = wrapped_x(x + dx)
+                ny = y + dy
+                if ny < 0 or ny >= height:
+                    continue
+                check_plot = mmap.plot(nx, ny)
+                if check_plot is None:
+                    continue
+                if check_plot.isWater():
+                    bonusType = check_plot.getBonusType(TeamTypes.NO_TEAM)
+                    if bonusType != BonusTypes.NO_BONUS:
+                        has_sea_resource = True
+                        break
+
+            if has_sea_resource:
+                # ピークを丘陵に変換
+                plot.setPlotType(PlotTypes.PLOT_HILLS, True, True)
+                ii = GetIndex(x, y)
+                sm.plotMap[ii] = mc.HILLS
+
+
 
 def normalizeAddExtras():
-    return
+    # fix isolated sea resource tiles
+    fixIsolatedSeaResourceTiles()
+    # fix isolated coast-adjacent land tiles blocked by a single peak
+    fixIsolatedCoastalTiles()
 
 
 def normalizeRemovePeaks():
-    return
+    pass
 
 
 def isAdvancedMap():
@@ -6385,13 +6446,14 @@ def addFeatures():
                             plot.setFeatureType(featureOasis, 0)
                     # else:
                     # print "oasis failed random check"
-
-    # After features, fix isolated coast-adjacent land tiles blocked by a single peak
-    fixIsolatedCoastalTiles()
     return
 
 
 def fixIsolatedCoastalTiles():
+    """
+    すべてのピークを走査し、4方向（N, S, E, W）のいずれかで海に隣接していれば丘陵に変換する。
+    湖の場合は変えない。
+    """
     gc = CyGlobalContext()
     mmap = gc.getMap()
     width = mc.width
@@ -6404,57 +6466,40 @@ def fixIsolatedCoastalTiles():
             return 0
         return x
 
-    # Check all plots; if a land, non-peak plot has no passable (non-peak land) in
-    # the 4 cardinal directions, try converting one adjacent peak to a hill to open access.
+    # 4方向（N, S, E, W）
+    card_dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]  # N, S, E, W
+
     for y in range(height):
         for x in range(width):
             plot = mmap.plot(x, y)
             if plot is None:
                 continue
-            if plot.isWater() or plot.isPeak():
+            if not plot.isPeak():
                 continue
 
-            # Determine if there is any passable land in 4-cardinal neighbors
-            has_passable_cardinal = False
-            neighbor_peaks = []
-            card_dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]  # N, S, E, W
+            # 4方向のいずれかで海に隣接しているかチェック
+            has_adjacent_ocean = False
             for dx, dy in card_dirs:
                 nx = wrapped_x(x + dx)
                 ny = y + dy
                 if ny < 0 or ny >= height:
                     continue
-                nplot = mmap.plot(nx, ny)
-                if nplot is None:
+                neighbor_plot = mmap.plot(nx, ny)
+                if neighbor_plot is None:
                     continue
-                if not nplot.isWater() and not nplot.isPeak():
-                    has_passable_cardinal = True
+                if neighbor_plot.isWater():
+                    # 湖かどうかをチェック（エリアが湖の場合はスキップ）
+                    waterArea = neighbor_plot.waterArea()
+                    if waterArea.isNone() == False and waterArea.isLake() == True:
+                        continue  # 湖の場合はスキップ
+                    # 海に隣接している
+                    has_adjacent_ocean = True
                     break
-                if nplot.isPeak():
-                    neighbor_peaks.append((nx, ny, dx, dy))
 
-            if has_passable_cardinal or not neighbor_peaks:
-                continue
-
-            # Prefer opening a corridor through a peak that leads directly to passable land 2 tiles away
-            chosen_peak = None
-            for nx, ny, dx, dy in neighbor_peaks:
-                tx = wrapped_x(nx + dx)
-                ty = ny + dy
-                if 0 <= ty < height:
-                    tplot = mmap.plot(tx, ty)
-                    if tplot is not None and not tplot.isWater() and not tplot.isPeak():
-                        chosen_peak = (nx, ny)
-                        break
-
-            # Fallback: just take the first peak neighbor
-            if chosen_peak is None:
-                chosen_peak = (neighbor_peaks[0][0], neighbor_peaks[0][1])
-
-            px, py = chosen_peak
-            pplot = mmap.plot(px, py)
-            if pplot is not None and pplot.isPeak():
-                pplot.setPlotType(PlotTypes.PLOT_HILLS, True, True)
-                ii = GetIndex(px, py)
+            if has_adjacent_ocean:
+                # ピークを丘陵に変換
+                plot.setPlotType(PlotTypes.PLOT_HILLS, True, True)
+                ii = GetIndex(x, y)
                 sm.plotMap[ii] = mc.HILLS
 
     return
