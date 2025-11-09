@@ -167,7 +167,7 @@ import os
 
 class MapConstants:
     def __init__(self):
-        return
+        self.initialize()
 
     def initialize(self):
         print "Initializing map constants"
@@ -5599,7 +5599,6 @@ def getNumCustomMapOptions():
     Number of different user-defined options for this map
     Return an integer
     """
-    mc.initialize()
     return 3
 
 
@@ -5696,30 +5695,34 @@ def isRandomCustomMapOption(argsList):
     return False
 
 
+
+
+
 # This doesn't work with my river system so it is disabled. Some civs
 # might start without a river. Boo hoo.
 def normalizeAddRiver():
-    return
+    pass
 
 
 def normalizeAddLakes():
-    return
+    CyPythonMgr().allowDefaultImpl()
 
 
 def normalizeAddGoodTerrain():
-    return
+    pass
 
 
 def normalizeRemoveBadTerrain():
-    return
+    pass
 
 
 def normalizeRemoveBadFeatures():
-    return
+    pass
 
 
 def normalizeAddFoodBonuses():
-    return
+    pass
+
 
 
 def normalizeAddExtras():
