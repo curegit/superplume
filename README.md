@@ -1,6 +1,6 @@
 # Superplume: a Perfect World 2 fork
 
-This is a yet another trivial fork of the map script Perfect World 2 for Civilization 4.
+This is yet another trivial fork of the map script Perfect World 2 for Civilization 4.
 
 ![Superplume.py result](superplume.png)
 
