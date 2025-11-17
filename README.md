@@ -1,13 +1,14 @@
 # Superplume: a Perfect World 2 fork
 
-This is a yet another trivial fork of Perfect World 2, a map script for Civilization 4.
+This is a yet another trivial fork of the map script Perfect World 2 for Civilization 4.
 
 ![Superplume.py result](superplume.png)
 
 ## Changes
 
+- Place glaciers along the northern and southern edges, as in the official maps.
 - Prevent peaks from being next to oceans.
-- Guarantee that every sea resource is accessible from the coast.
+- Ensure that every sea resource is accessible from the coast.
 - Simplify the code by removing unnecessary definitions and lines.
 - Formatted the code by using Black to make it easier to maintain.
 
@@ -17,4 +18,4 @@ This is a yet another trivial fork of Perfect World 2, a map script for Civiliza
 
 ## Development Notes
 
-The map scripting reference of the game is located at: `Assets\Python\EntryPoints\CvMapScriptInterface.py`.
+The game's map scripting reference is located at: `Assets\Python\EntryPoints\CvMapScriptInterface.py`.
