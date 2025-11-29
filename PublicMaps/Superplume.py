@@ -5724,6 +5724,29 @@ def normalizeAddFoodBonuses():
     pass
 
 
+def wrapped_x(x):
+    if x < 0:
+        if mc.WrapX:
+            return mc.width + x
+        return None
+    if x >= mc.width:
+        if mc.WrapX:
+          return x - mc.width
+        return None
+    return x
+
+def wrapped_y(y):
+    if y < 0:
+        if mc.WrapY:
+            return mc.height + y
+        return None
+    if y >= mc.height:
+        if mc.WrapY:
+            return y - mc.height
+        return None
+    return y
+
+
 def fixIsolatedSeaResourceTiles():
     """
     全ピークをループして、海に隣接かつ周囲2マス以内に海産資源がある場合、
@@ -5734,12 +5757,7 @@ def fixIsolatedSeaResourceTiles():
     width = mc.width
     height = mc.height
 
-    def wrapped_x(x):
-        if x == -1:
-            return width - 1
-        if x == width:
-            return 0
-        return x
+
 
     # 周囲2マス以内をチェックするためのオフセット（チェビシェフ距離2マス以内、ただし対角は除外）
     check_offsets = []
@@ -5763,8 +5781,10 @@ def fixIsolatedSeaResourceTiles():
             has_sea_resource = False
             for dx, dy in check_offsets:
                 nx = wrapped_x(x + dx)
-                ny = y + dy
-                if ny < 0 or ny >= height:
+                if nx is None:
+                    continue
+                ny = wrapped_y(y + dy)
+                if ny is None:
                     continue
                 check_plot = mmap.plot(nx, ny)
                 if check_plot is None:
@@ -6462,13 +6482,6 @@ def fixIsolatedCoastalTiles():
     width = mc.width
     height = mc.height
 
-    def wrapped_x(x):
-        if x == -1:
-            return width - 1
-        if x == width:
-            return 0
-        return x
-
     # 4方向（N, S, E, W）
     card_dirs = [(0, 1), (0, -1), (1, 0), (-1, 0)]  # N, S, E, W
 
@@ -6484,8 +6497,10 @@ def fixIsolatedCoastalTiles():
             has_adjacent_ocean = False
             for dx, dy in card_dirs:
                 nx = wrapped_x(x + dx)
-                ny = y + dy
-                if ny < 0 or ny >= height:
+                if nx is None:
+                    continue
+                ny = wrapped_y(y + dy)
+                if ny is None:
                     continue
                 neighbor_plot = mmap.plot(nx, ny)
                 if neighbor_plot is None:
