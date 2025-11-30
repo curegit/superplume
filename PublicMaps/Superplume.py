@@ -6149,9 +6149,9 @@ def makeHarbor(x, y, oceanMap):
         makeChannel(x, y - 1)
         oceanMap.defineAreas(isSmallWaterMatch)
         oceanID = oceanMap.getOceanID()
-    # NW
-    xx = x - 1
-    yy = y + 1
+    # SE
+    xx = x + 1
+    yy = y - 1
     ii = oceanMap.getIndex(xx, yy)
     if (
         ii > -1
