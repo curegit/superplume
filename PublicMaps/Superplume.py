@@ -595,9 +595,6 @@ class PythonRandom:
                 % {"s": seedValue}
             )
 
-        ##            seedValue = 4316490043753041
-        ##            seed(seedValue)
-        ##            self.seedString = "Pre-set seed (Using Pyhon rands) for this map is %(s)20d" % {"s":seedValue}
         else:
             gc = CyGlobalContext()
             self.mapRand = gc.getGame().getMapRand()
@@ -608,10 +605,6 @@ class PythonRandom:
                 "Random seed (Using getMapRand) for this map is %(s)20d"
                 % {"s": seedValue}
             )
-
-        ##            seedValue = 56870
-        ##            self.mapRand.init(seedValue)
-        ##            self.seedString = "Pre-set seed (Using getMapRand) for this map is %(s)20d" % {"s":seedValue}
 
         print self.seedString
         return
@@ -625,7 +618,6 @@ class PythonRandom:
             fResult = float(
                 self.mapRand.get(65535, "Getting float -FairWeather.py")
             ) / float(65535)
-            #            print fResult
             return fResult
 
     def randint(self, rMin, rMax):
@@ -765,7 +757,6 @@ def ShrinkMap(largeMap, lWidth, lHeight, sWidth, sHeight):
     xScale = float(lWidth) / float(sWidth)
     for y in range(sHeight):
         for x in range(sWidth):
-            ##            print "x = %d, y = %d" % (x,y)
             weights = 0.0
             contributors = 0.0
             yyStart = int(y * yScale)
@@ -778,16 +769,11 @@ def ShrinkMap(largeMap, lWidth, lHeight, sWidth, sHeight):
                 if xxStop < ((x + 1) * xScale):
                     xxStop += 1
                 for xx in range(xxStart, xxStop):
-                    ##                    print "  xx = %d, yy = %d" % (xx,yy)
                     weight = GetWeight(x, y, xx, yy, xScale, yScale)
-                    ##                    print "  weight = %f" % weight
                     i = yy * lWidth + xx
-                    ##                    print "  i = %d" % i
                     contributor = largeMap[i]
-                    ##                    print "  contributer = %f" % contributor
                     weights += weight
                     contributors += weight * contributor
-            ##            print " final height = %f" % (contributors/weights)
             smallMap.append(contributors / weights)
 
     return smallMap
@@ -795,26 +781,16 @@ def ShrinkMap(largeMap, lWidth, lHeight, sWidth, sHeight):
 
 def GetWeight(x, y, xx, yy, xScale, yScale):
     xWeight = 1.0
-    ##    print "   xScale = %f" % xScale
-    ##    print "   x * xScale = %f, xx = %f" % ((x * xScale),xx)
     if float(xx) < x * xScale:
-        ##        print "   first"
         xWeight = 1.0 - ((x * xScale) - float(xx))
     elif float(xx + 1) > (x + 1) * xScale:
-        ##        print "   second"
         xWeight = ((x + 1) * xScale) - float(xx)
-    ##    print "   xWeight = %f" % xWeight
 
     yWeight = 1.0
-    ##    print "   yScale = %f" % yScale
-    ##    print "   y * yScale = %f, yy = %f" % ((y * yScale),yy)
     if float(yy) < y * yScale:
-        ##        print "   first"
         yWeight = 1.0 - ((y * yScale) - float(yy))
     elif float(yy + 1) > (y + 1) * yScale:
-        ##        print "   second"
         yWeight = ((y + 1) * yScale) - float(yy)
-    ##    print "   yWeight = %f" % yWeight
 
     return xWeight * yWeight
 
@@ -961,13 +937,6 @@ def FindValueFromPercent(mmap, width, height, percent, tolerance, greaterThan):
             overMinCount += 1
         elif mmap[i] == minV:
             equalMinCount += 1
-    ##    print "--------------------------------------------------------------"
-    ##    print "totalCount = %d" % totalCount
-    ##    print "overMinCount = %d" % overMinCount
-    ##    print "equalMinCount = %d" % equalMinCount
-    ##    print "starting threshold = %f" % mid
-    ##    print "desired percent = %f" % percent
-    ##    print "minV = %f, maxV = %f" % (minV,maxV)
 
     threshold = mid
     thresholdChange = mid
@@ -988,11 +957,7 @@ def FindValueFromPercent(mmap, width, height, percent, tolerance, greaterThan):
                 else:
                     if mmap[i] < threshold:
                         matchCount += 1
-        ##        print "current threshold = %f" % threshold
-        ##        print "current thresholdChange = %f" % thresholdChange
-        ##        print "matchCount = %d" % matchCount
         currentPercent = float(matchCount) / float(totalCount)
-        ##        print "currentPercent = %f" % currentPercent
         if (
             currentPercent < percent + tolerance
             and currentPercent > percent - tolerance
@@ -1000,47 +965,39 @@ def FindValueFromPercent(mmap, width, height, percent, tolerance, greaterThan):
             inTolerance = True
         elif greaterThan == True:
             if currentPercent < percent:
-                ##                print "threshold subtract"
                 threshold -= thresholdChange
                 if lastAdded:
                     # only cut thresholdChange when direction is changed
                     thresholdChange = thresholdChange / 2.0
                 lastAdded = False
             else:
-                ##                print "threshold add"
                 threshold += thresholdChange
                 if not lastAdded:
                     thresholdChange = thresholdChange / 2.0
                 lastAdded = True
         else:
             if currentPercent > percent:
-                ##                print "threshold subtract"
                 threshold -= thresholdChange
                 if lastAdded:
                     # only cut thresholdChange when direction is changed
                     thresholdChange = thresholdChange / 2.0
                 lastAdded = False
             else:
-                ##                print "threshold add"
                 threshold += thresholdChange
                 if not lastAdded:
                     thresholdChange = thresholdChange / 2.0
                 lastAdded = True
-    ##        print "--------------"
 
     # at this point value should be in tolerance or close to it
-    ##    print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
     return threshold
 
 
 def isWaterMatch(x, y):
     result = hm.isBelowSeaLevel(x, y)
-    ##    print "match function results - x = %d,y = %d,result = %d" % (x,y,result)
     return result
 
 
 class HeightMap:
-
     def generateHeightMap(self):
         self.heightMap = array("d")
         for i in range(mc.hmWidth * mc.hmHeight):
@@ -1050,11 +1007,10 @@ class HeightMap:
         if not mc.WrapY:
             self.ensureWaterAndIceAtEdges()
 
-
     def ensureWaterAndIceAtEdges(self):
         gc = CyGlobalContext()
         mmap = gc.getMap()
-        # 上端と下端の少なくとも2タイル分を水域にし、氷河を配置
+        # 上端と下端の少なくとも2タイル分を水域にし、氷河を配置させる
         for y in range(2):
             for x in range(mc.hmWidth):
                 i = GetHmIndex(x, y)
@@ -1062,9 +1018,6 @@ class HeightMap:
                     self.heightMap[i] = 0.0  # 水域
                 elif PRand.random() < 0.5:
                     self.heightMap[i] = 0.0  # 水域
-                # 氷河を配置
-                #plot = mmap.plot(x, y)
-                #plot.setFeatureType(gc.getInfoTypeForString("FEATURE_ICE"), 0)
 
         for y in range(mc.hmHeight - 2, mc.hmHeight):
             for x in range(mc.hmWidth):
@@ -1073,9 +1026,6 @@ class HeightMap:
                     self.heightMap[i] = 0.0  # 水域
                 elif PRand.random() < 0.5:
                     self.heightMap[i] = 0.0  # 水域
-                # 氷河を配置
-                #plot = mmap.plot(x, y)
-                #plot.setFeatureType(gc.getInfoTypeForString("FEATURE_ICE"), 0)
 
     def checkMaxGrain(self):
         # hm map dimensions(minus 1 if no wrapping) must be evenly divisible
@@ -1335,8 +1285,6 @@ class HeightMap:
 
                     break
 
-        ##        self.printPlateMap(self.plateMap)
-
         # Now cause the seeds to grow into plates
         iterations = 0
         while len(growthPlotList) > 0:
@@ -1378,8 +1326,6 @@ class HeightMap:
                 growthPlotList.append(plot)
             del growthPlotList[0]
 
-        ##        self.printPlateMap(self.plateMap)
-
         # to balance the map we want at least one plate stagger upward
         # in each quadrant
         NWfound = False
@@ -1417,8 +1363,6 @@ class HeightMap:
                     float(self.plateMap[i].plateID % steps) * mc.plateStagger
                 )
 
-        ##        self.printPreSmoothMap(preSmoothMap)
-
         # Now smooth the plate height map and create the distance map at the same time
         # Since the algorithm is the same
         for y in range(0, mc.hmHeight):
@@ -1452,16 +1396,12 @@ class HeightMap:
                 avg = avg / float(contributers)
                 self.plateHeightMap[i] = avg
 
-        ##        self.printPlateHeightMap()
-        #        self.printDistanceMap(distanceMap,maxDistance)
-
         # Now add ripple formula to plateHeightMap
         for i in range(mc.hmWidth * mc.hmHeight):
             avgRippleTop = 0.0
             avgRippleBottom = 0.0
             for plateID in range(1, mc.hmNumberOfPlates + 1):
                 distanceWeight = maxDistance - self.plateMap[i].distanceList[plateID]
-                #                print "a1 = %f, a2 = %f" % (plateList[self.plateMap[i].plateID].angle,plateList[plateID].angle)
                 if plateList[plateID].seedX < plateList[self.plateMap[i].plateID].seedX:
                     angleDifference = AngleDifference(
                         plateList[self.plateMap[i].plateID].angle,
@@ -1472,7 +1412,6 @@ class HeightMap:
                         plateList[plateID].angle,
                         plateList[self.plateMap[i].plateID].angle,
                     )
-                #                print angleDifference
                 ripple = (
                     (
                         pow(
@@ -1502,8 +1441,6 @@ class HeightMap:
             )
 
         NormalizeMap(self.plateHeightMap, mc.hmWidth, mc.hmHeight)
-
-    ##        self.printPlateHeightMap()
 
     def combineMaps(self):
         # Now add plateHeightMap to HeightMap
@@ -1550,10 +1487,6 @@ class HeightMap:
                             1.0 - mc.hmMarginDepth
                         ) + mc.hmMarginDepth
 
-        ##        #Now lets square the heightmap to simulate erosion
-        ##        for i in range(mc.hmWidth * mc.hmHeight):
-        ##            self.heightMap[i] = self.heightMap[i] * self.heightMap[i]
-
         NormalizeMap(self.heightMap, mc.hmWidth, mc.hmHeight)
 
     def addWaterBands(self):
@@ -1570,7 +1503,7 @@ class HeightMap:
             for x in range(newWidth):
                 oldX = x - mc.westWaterBand
                 oldY = y - mc.southWaterBand
-                #                i = GetIndexGeneral(x,y,newWidth,newHeight)
+
                 ii = GetHmIndex(oldX, oldY)
                 if ii == -1:
                     newHeightMap.append(0.0)
@@ -1589,12 +1522,8 @@ class HeightMap:
 
     def isBelowSeaLevel(self, x, y):
         i = GetHmIndex(x, y)
-        ##        print "heightMap = %f at %d,%d" % (self.heightMap[i],x,y)
-        ##        print "seaLevel = %f" % self.seaLevel
         if self.heightMap[i] < self.seaLevel:
-            ##            print "True"
             return True
-        ##        print "False"
         return False
 
     ## This function returns altitude in relation to sea level with
@@ -1614,14 +1543,6 @@ class HeightMap:
         if i == -1:
             return
         self.heightMap[i] = ((1.0 - self.seaLevel) * altitude) + self.seaLevel
-
-    ##    def Erode(self):
-    ##        for y in range(mc.hmHeight):
-    ##            for x in range(mc.hmWidth):
-    ##                alt = self.getAltitudeAboveSeaLevel(x,y)
-    ##                if alt > 0:
-    ##                    eroded = pow(alt,mc.erosionPower)
-    ##                    self.setAltitudeAboveSeaLevel(x,y,eroded)
 
     def isSeedBlocked(self, plateList, seedX, seedY):
         for plate in plateList:
@@ -1646,7 +1567,6 @@ class HeightMap:
         maxDistance = math.sqrt(
             pow(float(searchRadius), 2) + pow(float(searchRadius), 2)
         )
-        # minDistance = 1.0
         influence -= ((peakValue - sinkValue) * (distance - 1.0)) / (maxDistance - 1.0)
         return influence
 
@@ -1673,7 +1593,7 @@ class HeightMap:
         # and more sensible.
         am = Areamap(mc.hmWidth, mc.hmHeight, True, True)
         am.defineAreas(isWaterMatch)
-        ##        am.PrintAreaMap()
+
         oceanID = am.getOceanID()
         for y in range(mc.hmHeight):
             for x in range(mc.hmWidth):
@@ -1718,7 +1638,6 @@ class HeightMap:
                 mapLoc = int(
                     (self.heightMap[i] - self.seaLevel) / (1.0 - self.seaLevel) * 10
                 )
-                # mapLoc = int(self.heightMap[i] * 10)
                 if self.heightMap[i] < self.seaLevel:
                     lineString += "."
                 else:
@@ -1953,9 +1872,6 @@ class ClimateMap:
         self.dropRain(orderList, self.averageTempMap, True, wz)
 
         NormalizeMap(self.rainFallMap, mc.hmWidth, mc.hmHeight)
-
-    ##        self.printRainFallMap(True)
-    ##        self.printRainFallMap(False)
 
     def dropRain(self, plotList, tempMap, bGeostrophic, windZones):
         countRemaining = len(plotList)
@@ -2323,7 +2239,6 @@ class SmallMaps:
         # shrinker sometimes creates lakes.
         am = Areamap(mc.width, mc.height, True, True)
         am.defineAreas(isSmallWaterMatch)
-        ##        am.PrintAreaMap()
         oceanID = am.getOceanID()
         for y in range(mc.height):
             for x in range(mc.width):
@@ -2696,15 +2611,11 @@ class PangaeaBreaker:
         self.areaMap = Areamap(mc.hmWidth, mc.hmHeight, True, True)
         meteorThrown = False
         pangeaDetected = False
-        ##        anotherPangaea = True
-        #        self.cm.PrintAreaMap()
-        ##        while anotherPangaea:
-        ##            NormalizeMap(hm.heightMap,mc.hmWidth,mc.hmHeight)
-        ##            hm.calculateSeaLevel()
+
         self.createDistanceMap()
-        ##        self.printDistanceMap()
+
         self.areaMap.defineAreas(isHmWaterMatch)
-        ##        self.areaMap.PrintAreaMap()
+
         meteorCount = 0
         while (
             not mc.AllowPangeas
@@ -2717,12 +2628,10 @@ class PangaeaBreaker:
             self.castMeteorUponTheEarth(x, y)
             meteorThrown = True
             meteorCount += 1
-            ##            hm.printHeightMap()
+
             self.createDistanceMap()
-            ##            self.printDistanceMap()
+
             self.areaMap.defineAreas(isHmWaterMatch)
-        ##            self.areaMap.PrintAreaMap()
-        ##            anotherPangaea = False
 
         if meteorThrown:
             print "The age of dinosours has come to a cataclysmic end."
@@ -2733,9 +2642,7 @@ class PangaeaBreaker:
         elif pangeaDetected == False:
             print "No pangea detected on this map."
 
-    ##        self.areaMap.PrintAreaMap()
     def isPangea(self):
-        ##        starttime = time.clock()
         continentList = list()
         for a in self.areaMap.areaList:
             if a.water == False:
@@ -2750,19 +2657,10 @@ class PangaeaBreaker:
         continentList.reverse()
         biggestSize = continentList[0].size
         if 0.70 < float(biggestSize) / float(totalLand):
-            ##            endtime = time.clock()
-            ##            elapsed = endtime - starttime
-            ##            print "isPangea time = %(t)s" % {"t":str(elapsed)}
             return True
-        ##        endtime = time.clock()
-        ##        elapsed = endtime - starttime
-        ##        print "isPangea time = "
-        ##        print elapsed
-        ##        print
         return False
 
     def getMeteorStrike(self):
-        ##        starttime = time.clock()
         continentList = list()
         for a in self.areaMap.areaList:
             if a.water == False:
@@ -2776,46 +2674,6 @@ class PangaeaBreaker:
         x, y = self.getHighestCentrality(biggestContinentID)
 
         return x, y
-
-    ##        chokeList = list()
-    ##        for y in range(mc.hmHeight):
-    ##            for x in range(mc.hmWidth):
-    ##                i = GetHmIndex(x,y)
-    ##                if i == -1:
-    ##                    continue
-    ##                if self.areaMap.areaMap[i] == biggestContinentID and\
-    ##                not hm.isBelowSeaLevel(x,y): #this helps narrow the search
-    ##                    if self.isChokePoint(x,y,biggestContinentID):
-    ####                        print "chokepoint area at %d,%d = %d" % (x,y,biggestContinentID)
-    ##                        ap = AreaPlot(x,y)
-    ##                        chokeList.append(ap)
-    ##        #calculate distances to center
-    ##        center = self.getContinentCenter(biggestContinentID)
-    ##        xCenter,yCenter = center
-    ##
-    ##        for n in range(len(chokeList)):
-    ##            distance = self.getDistance(chokeList[n].x,chokeList[n].y,xCenter,yCenter)
-    ##            chokeList[n].avgDistance = distance
-    ##
-    ##        #sort plotList for most avg distance and chokeList for least
-    ##        #average distance
-    ##        chokeList.sort(lambda x,y:cmp(x.avgDistance,y.avgDistance))
-    ##
-    ##        if len(chokeList) == 0:#return bad value if no chokepoints
-    ####            endtime = time.clock()
-    ####            elapsed = endtime - starttime
-    ####            print "getMeteorStrike time = "
-    ####            print elapsed
-    ####            print
-    ##            return -1,-1
-    ##
-    ####        endtime = time.clock()
-    ####        elapsed = endtime - starttime
-    ####        print "getMeteorStrike time = "
-    ####        print elapsed
-    ####        print
-    ##
-    ##        return chokeList[0].x,chokeList[0].y
 
     def isChokePoint(self, x, y, biggestContinentID):
         circlePoints = self.getCirclePoints(x, y, mc.minimumMeteorSize)
@@ -2882,46 +2740,7 @@ class PangaeaBreaker:
                     yTotal += y
         xCenter = round(float(xTotal) / float(IDCount))
         yCenter = round(float(yTotal) / float(IDCount))
-        ##        #first find center in x direction
-        ##        changes = list()
-        ##        yMin = mc.height
-        ##        yMax = -1
-        ##        meridianOverlap = False
-        ##        onContinent = False
-        ##        for x in range(mc.hmWidth):
-        ##            continentFoundThisPass = False
-        ##            for y in range(mc.hmHeight):
-        ##                i = GetHmIndex(x,y)
-        ##                if self.areaMap.areaMap[i] == ID:
-        ##                    continentFoundThisPass = True
-        ##                    if y < yMin:
-        ##                        yMin = y
-        ##                    elif y > yMax:
-        ##                        yMax = y
-        ##            if x == 0 and continentFoundThisPass:
-        ##                meridianOverlap = True
-        ##                onContinent = True
-        ##            if onContinent and not continentFoundThisPass:
-        ##                changes.append(x)
-        ##                onContinent = False
-        ##            elif not onContinent and continentFoundThisPass:
-        ##                changes.append(x)
-        ##                onContinent = True
-        ##        changes.sort()
-        ##        xCenter = -1
-        ##        if len(changes) == 0: #continent is continuous
-        ##            xCenter = -1
-        ##        elif len(changes) == 1:#continent extends to map edge
-        ##            if meridianOverlap:
-        ##                xCenter = changes[0]/2
-        ##            else:
-        ##                xCenter = (mc.width - changes[0])/2 + changes[0]
-        ##        else:
-        ##            if meridianOverlap:
-        ##                xCenter = ((changes[1] - changes[0])/2 + changes[0] + (mc.hmWidth/2)) % mc.hmWidth
-        ##            else:
-        ##                xCenter = (changes[1] - changes[0])/2 + changes[0]
-        ##        yCenter = (yMax - yMin)/2 + yMin
+
         center = xCenter, yCenter
         return center
 
@@ -2934,13 +2753,11 @@ class PangaeaBreaker:
         return distance
 
     def castMeteorUponTheEarth(self, x, y):
-        ##        starttime = time.clock()
         radius = PRand.randint(
             mc.minimumMeteorSize, max(mc.minimumMeteorSize + 1, mc.hmWidth / 16)
         )
         circlePointList = self.getCirclePoints(x, y, radius)
-        ##        print "circlePointList"
-        ##        print circlePointList
+
         circlePointList.sort(lambda n, m: cmp(n.y, m.y))
         for n in range(0, len(circlePointList), 2):
             cy = circlePointList[n].y
@@ -2952,45 +2769,16 @@ class PangaeaBreaker:
                 x1 = circlePointList[n + 1].x
             self.drawCraterLine(x1, x2, cy)
 
-        ##        for n in range(0,len(circlePointList),2): not needed since this is happening on heightmap only
-        ##            cy = circlePointList[n].y
-        ##            if circlePointList[n].x < circlePointList[n + 1].x:
-        ##                x1 = circlePointList[n].x
-        ##                x2 = circlePointList[n + 1].x
-        ##            else:
-        ##                x2 = circlePointList[n].x
-        ##                x1 = circlePointList[n + 1].x
-        ##            self.drawCraterCoastLine(x1,x2,cy)
         return
 
-    ##    def drawCraterCoastLine(self,x1,x2,y): not needed since this is happening on heightmap only
-    ##        if y < 0 or y >= mc.hmHeight:
-    ##            return
-    ##        for x in range(x1,x2 + 1):
-    ##            if self.hasLandNeighbor(x,y):
-    ##                i = GetHmIndex(x,y)
-    ##                sm.terrainMap[i] = mc.COAST
-    ##        return
     def drawCraterLine(self, x1, x2, y):
         if y < 0 or y >= mc.hmHeight:
             return
         for x in range(x1, x2 + 1):
             i = GetHmIndex(x, y)
-            ##            sm.terrainMap[i] = mc.OCEAN
             hm.heightMap[i] = 0.0
-        ##            sm.plotMap[i] = mc.OCEAN
         return
 
-    ##    def hasLandNeighbor(self,x,y): not needed since this is happening on heightmap only
-    ##        #y cannot be outside of map so I'm not testing for it
-    ##        for yy in range(y - 1,y + 2):
-    ##            for xx in range(x - 1,x + 2):
-    ##                if yy == y and xx == x:
-    ##                    continue
-    ##                ii = GetHmIndex(xx,yy)
-    ##                if sm.terrainMap[ii] != mc.COAST and sm.terrainMap[ii] != mc.OCEAN:
-    ##                    return True
-    ##        return False
     def getCirclePoints(self, xCenter, yCenter, radius):
         circlePointList = list()
         x = 0
@@ -3076,7 +2864,7 @@ class PangaeaBreaker:
         for y in range(0, mc.hmHeight):
             for x in range(0, mc.hmWidth):
                 i = GetHmIndex(x, y)
-                ##                print "h %% gap = %d, w %% gap = %d" % (y % gap,y % gap)
+
                 if y % gap == 0 and x % gap == 0 and self.areaMap.areaMap[i] == ID:
                     C.append(CentralityScore(x, y))
                     indexMap.append(n)
@@ -3086,7 +2874,6 @@ class PangaeaBreaker:
 
         n = 0
         for s in C:
-            ##            print "s at %d,%d index %d is neighbors with" % (s.x,s.y,n)
             # Check 4 nieghbors
             xx = s.x - gap
             if xx < 0:
@@ -3094,33 +2881,26 @@ class PangaeaBreaker:
             i = GetHmIndex(xx, s.y)
             if i != -1 and self.areaMap.areaMap[i] == ID:
                 s.neighborList.append(indexMap[i])
-            ##                print "%d,%d index %d" % (xx,s.y,indexMap[i])
             xx = s.x + gap
             if xx >= mc.hmWidth:
                 xx = 0
             i = GetHmIndex(xx, s.y)
             if i != -1 and self.areaMap.areaMap[i] == ID:
                 s.neighborList.append(indexMap[i])
-            ##                print "%d,%d index %d" % (xx,s.y,indexMap[i])
             yy = s.y - gap
             if yy < 0:
                 yy = mc.hmHeight / gap * gap
             i = GetHmIndex(s.x, yy)
             if i != -1 and self.areaMap.areaMap[i] == ID:
                 s.neighborList.append(indexMap[i])
-            ##                print "%d,%d index %d" % (s.x,yy,indexMap[i])
             yy = s.y + gap
             if yy > mc.hmHeight:
                 yy = 0
             i = GetHmIndex(s.x, yy)
             if i != -1 and self.areaMap.areaMap[i] == ID:
                 s.neighborList.append(indexMap[i])
-            ##                print "%d,%d index %d" % (s.x,yy,indexMap[i])
 
             n += 1
-
-        ##        self.areaMap.PrintAreaMap()
-        ##        self.printContinentList(ID,gap)
 
         return C
 
@@ -3161,12 +2941,10 @@ class PangaeaBreaker:
             Q.append(s)
             while len(Q) > 0:
                 v = Q.pop(0)
-                ##                print len(Q)
                 S.append(v)
                 for w in C[v].neighborList:
                     if d[w] < 0:
                         Q.append(w)
-                        #                            print len(Q)
                         d[w] = d[v] + 1
                     if d[w] == d[v] + 1:
                         sigma[w] = sigma[w] + sigma[v]
@@ -3177,7 +2955,6 @@ class PangaeaBreaker:
                     delta[v] = delta[v] + (sigma[v] / sigma[w]) * (1 + delta[w])
                     if w != s:
                         C[w].centrality = C[w].centrality + delta[w]
-        ##            print s
 
         return C
 
@@ -3236,9 +3013,7 @@ class ContinentMap:
     def generateContinentMap(self):
         self.areaMap = Areamap(mc.width, mc.height, True, True)
         self.areaMap.defineAreas(isNonCoastWaterMatch)
-        ##        self.areaMap.PrintAreaMap()
         self.newWorldID = self.getNewWorldID()
-        #        self.cm.PrintAreaMap()
         return
 
     def getNewWorldID(self):
@@ -3252,10 +3027,6 @@ class ContinentMap:
         for c in continentList:
             totalLand += c.size
 
-        ##        print totalLand
-
-        # sort all the continents by size, largest first
-        #        continentList.sort(key=operator.attrgetter('size'),reverse=True)
         continentList.sort(lambda x, y: cmp(x.size, y.size))
         continentList.reverse()
 
@@ -3280,7 +3051,7 @@ class ContinentMap:
 
         # sort list by ID rather than size to make things
         # interesting and possibly bigger new worlds
-        #        continentList.sort(key=operator.attrgetter('ID'),reverse=True)
+
         continentList.sort(lambda x, y: cmp(x.ID, y.ID))
         continentList.reverse()
 
@@ -3343,35 +3114,8 @@ class Areamap:
                 area = Area(areaID, areaSize, match)
                 self.areaList.append(area)
 
-        ##        endtime = time.clock()
-        ##        elapsed = endtime - starttime
-        ##        print "defineAreas time ="
-        ##        print elapsed
-        ##        print
-
         return
 
-    ##    def isWater(self,x,y,coastIsLand):
-    ##        #coastIsLand = True means that we are trying to find continents that
-    ##        #are not connected by coasts to the main landmasses, allowing us to
-    ##        #find continents suitable as a 'New World'. Otherwise, we
-    ##        #are just looking to fill in lakes and coast needs to be considered
-    ##        #water in that case
-    ##        ii = self.getIndex(x,y)
-    ##        if ii == -1:
-    ##            return False
-    ##        if coastIsLand:
-    ##            if hm.plotMap[ii] == hm.OCEAN and terr.terrainMap[ii] != terr.COAST:
-    ##                return True
-    ##            else:
-    ##                return False
-    ##        else:
-    ##            if hm.isBelowSeaLevel(x,y):
-    ##                return True
-    ##            else:
-    ##                return False
-    ##
-    ##        return False
     def getAreaByID(self, areaID):
         for i in range(len(self.areaList)):
             if self.areaList[i].ID == areaID:
@@ -3379,7 +3123,6 @@ class Areamap:
         return None
 
     def getOceanID(self):
-        #        self.areaList.sort(key=operator.attrgetter('size'),reverse=True)
         self.areaList.sort(lambda x, y: cmp(x.size, y.size))
         self.areaList.reverse()
         for a in self.areaList:
@@ -3423,10 +3166,6 @@ class Areamap:
         while len(self.segStack) > 0:
             seg = self.segStack.pop()
             self.scanAndFillLine(seg, areaID, matchValue, matchFunction)
-        ##            if (seg.y < 8 and seg.y > 4) or (seg.y < 70 and seg.y > 64):
-        ##            if (areaID == 4
-        ##                PrintPlotMap(hm)
-        ##                self.PrintAreaMap()
 
         return self.size, matchFunction(x, y)
 
@@ -3434,12 +3173,9 @@ class Areamap:
         # check for y + dy being off map
         i = self.getIndex(seg.xLeft, seg.y + seg.dy)
         if i < 0:
-            ##            print "scanLine off map ignoring",str(seg)
             return
         debugReport = False
-        ##        if (seg.y < 8 and seg.y > 4) or (seg.y < 70 and seg.y > 64):
-        ##        if (areaID == 4):
-        ##            debugReport = True
+
         # for land tiles we must look one past the x extents to include
         # 8-connected neighbors
         if self.b8connected:
@@ -3495,7 +3231,7 @@ class Areamap:
             print "xLeftExtreme finally = %(xl)4d" % {"xl": xLeftExtreme}
             print "Going Right"
         # now scan right to find extreme right, place each found segment on stack
-        #        xRightExtreme = seg.xLeft - landOffset #needed sometimes? one time it was not initialized before use.
+        # needed sometimes? one time it was not initialized before use.
         xRightExtreme = (
             seg.xLeft
         )  # needed sometimes? one time it was not initialized before use.
@@ -3804,7 +3540,6 @@ class RiverMap:
         riverThreshold = sm.plainsThreshold * mc.RiverThreshold
         for i in range(mc.height * mc.width):
             if self.drainageMap[i] > riverThreshold:
-                ##                    riverCount += 1
                 self.riverMap[i] = self.flowMap[i]
             else:
                 self.riverMap[i] = self.O
@@ -3831,10 +3566,8 @@ class RiverMap:
                 if self.isLake(x, y):
                     lakeList.append((x, y, 1))
                     onQueueMap[i] = 1
-        ##        print "initial lakes = %d" % (len(lakeList))
         largestLength = len(lakeList)
         while len(lakeList) > 0:
-            ##            print "len = %d" % (len(lakeList))
             if len(lakeList) > largestLength:
                 largestLength = len(lakeList)
             x, y, lakeSize = lakeList[0]
@@ -3845,7 +3578,6 @@ class RiverMap:
             if lakeSize > mc.maxSiltPanSize:
                 continue
             lakeSize += 1
-            ##            print x,y
             lowestNeighborAlt = self.getLowestNeighborAltitude(x, y)
             self.averageHeightMap[i] = lowestNeighborAlt + 0.005
             for direction in range(1, 5, 1):
@@ -3854,11 +3586,8 @@ class RiverMap:
                 if ii == -1:
                     continue
                 if self.isLake(xx, yy) and onQueueMap[ii] == 0:
-                    ##                    print "appending lake at %d,%d" % (xx,yy)
                     lakeList.append((xx, yy, lakeSize))
                     onQueueMap[ii] = 1
-        ##        print "returning from siltify"
-        ##        print "largest length of lakeList = %d" % largestLength
         return
 
     def isLake(self, x, y):
@@ -3987,8 +3716,6 @@ class RiverMap:
                     lineString2 += ".>"
                 elif mapLoc == rm.W:
                     lineString2 += ".<"
-            ##            lineString1 += "-" + wz.GetZoneName(wz.GetZone(y))
-            ##            lineString2 += "-" + wz.GetZoneName(wz.GetZone(y))
             print lineString1
             print lineString2
         lineString1 = " "
@@ -4212,7 +3939,6 @@ class BonusPlacer:
             eBonus = self.bonusList[i].eBonus
             if bonusInfo.isOneArea() == False:
                 continue  # Only assign areas to area bonuses
-            ##            print "Trying to find room for %(bt)s, desiredCount=%(dc)d" % {"bt":bonusInfo.getType(),"dc":self.bonusList[i].desiredBonusCount}
             areaSuitabilityList = list()
             for area in self.areas:
                 if area.getNumTiles() >= minLandAreaSize:
@@ -4221,10 +3947,7 @@ class BonusPlacer:
                         area, eBonus
                     )
                     areaSuitabilityList.append(aS)
-            ##                    print "suitability on areaID=%(aid)d, size=%(s)d is %(r)f" % \
-            ##                    {"aid":area.getID(),"s":area.getNumTiles(),"r":aS.suitability}
             # Calculate how many areas to assign (numUniqueBonuses will be > 0 if we get here)
-            ##            areasPerBonus = (len(areaSuitabilityList)/numUniqueBonuses) + 1
             areasPerBonus = 1
             # Sort areaSuitabilityList best first
             areaSuitabilityList.sort(lambda x, y: cmp(x.numPossible, y.numPossible))
@@ -5300,7 +5023,7 @@ class StartingArea:
         # and having the best plot eat plots within 3 squares, then same for next,
         # etc.
         self.plotList.reverse()
-        ##        print "number of initial plots in areaID = %(a)3d is %(p)5d" % {"a":self.areaID,"p":len(self.plotList)}
+
         numPlots = len(self.plotList)
         for n in range(numPlots):
             # At some point the length of plot list will be much shorter than at
@@ -5321,14 +5044,9 @@ class StartingArea:
                         # the beginning of the loop, so it can never end normally
                         if m >= len(self.plotList) - 1:
                             break
-                        ##                        print "m = %(m)3d, n = %(n)3d" % {"m":m,"n":n}
                         if self.plotList[m] != self.plotList[n]:
                             if self.plotList[m].x == xx and self.plotList[m].y == yy:
-                                ##                                print "deleting m = %(m)3d" % {"m":m}
                                 del self.plotList[m]
-        ##                                print "length of plotList now %(len)4d" % {"len":len(self.plotList)}
-
-        ##        print "number of final plots in areaID = %(a)3d is %(p)5d" % {"a":self.areaID,"p":len(self.plotList)}
 
         # At this point we should have a list of the very best places
         # to build cities on this continent. Now we need a table with
@@ -5347,13 +5065,7 @@ class StartingArea:
                 mPlot = gameMap.plot(self.plotList[m].x, self.plotList[m].y)
                 gameMap.resetPathDistance()
                 distance = gameMap.calculatePathDistance(nPlot, mPlot)
-                #               distance = self.getDistance(nPlot.getX(),nPlot.getY(),mPlot.getX(),mPlot.getY())
-                # If path fails try reversing it
-                ##                gameMap.resetPathDistance()
-                ##                newDistance = gameMap.calculatePathDistance(mPlot,nPlot)
-                ##                if distance != newDistance:
-                ##                    print "distance between n=%(n)d nx=%(nx)d,ny=%(ny)d and m=%(m)d mx=%(mx)d,my=%(my)d is %(d)d or %(nd)d" % \
-                ##                    {"n":n,"nx":nPlot.getX(),"ny":nPlot.getY(),"m":m,"mx":mPlot.getX(),"my":mPlot.getY(),"d":distance,"nd":newDistance}
+
                 self.distanceTable[n * len(self.plotList) + m] = distance
                 self.distanceTable[m * len(self.plotList) + n] = distance
                 avgDistance += distance
@@ -5397,14 +5109,8 @@ class StartingArea:
             distanceList.sort(lambda x, y: cmp(x.nearestStart, y.nearestStart))
             distanceList.reverse()
             distanceList[0].vacant = False
-        ##            print "Placing start at x=%(x)d, y=%(y)d nearestDistance to city is %(n)d" % \
-        ##            {"x":distanceList[0].x,"y":distanceList[0].y,"n":distanceList[0].nearestStart}
 
         self.CalculateStartingPlotValues()
-
-        ##        self.PrintPlotMap()
-        ##        self.PrintPlotList()
-        ##        self.PrintDistanceTable()
 
         # Now place all starting positions
         n = 0
@@ -5447,15 +5153,14 @@ class StartingArea:
                         continue
                     ii = p * numPlots + m
                     pDistance = self.distanceTable[ii]
-                    ##                    print "n= %(n)3d, m = %(m)3d, p = %(p)3d, nDistance = %(nd)3d, pDistance = %(pd)3d" %\
-                    ##                    {"n":n,"m":m,"p":p,"nd":nDistance,"pd":pDistance}
+
                     if pDistance > -1 and pDistance <= nDistance:
                         leastDistance = False  # Proven wrong
                         break
 
                 if leastDistance == True:
                     self.plotList[n].totalValue += self.plotList[m].localValue
-                    #                    print "m = %(m)3d owner change from %(mo)3d to %(n)3d" % {"m":m,"mo":self.plotList[m].owner,"n":n}
+
                     self.plotList[m].owner = self.plotList[n]
                     self.plotList[m].distanceToOwner = nDistance
                     self.plotList[n].numberOfOwnedCities += 1
@@ -5710,9 +5415,6 @@ def isRandomCustomMapOption(argsList):
     return False
 
 
-
-
-
 # This doesn't work with my river system so it is disabled. Some civs
 # might start without a river. Boo hoo.
 def normalizeAddRiver():
@@ -5746,9 +5448,10 @@ def wrapped_x(x):
         return None
     if x >= mc.width:
         if mc.WrapX:
-          return x - mc.width
+            return x - mc.width
         return None
     return x
+
 
 def wrapped_y(y):
     if y < 0:
@@ -5771,8 +5474,6 @@ def fixIsolatedSeaResourceTiles():
     mmap = gc.getMap()
     width = mc.width
     height = mc.height
-
-
 
     # 周囲2マス以内をチェックするためのオフセット（チェビシェフ距離2マス以内、ただし対角は除外）
     check_offsets = []
@@ -5815,7 +5516,6 @@ def fixIsolatedSeaResourceTiles():
                 plot.setPlotType(PlotTypes.PLOT_HILLS, True, True)
                 ii = GetIndex(x, y)
                 sm.plotMap[ii] = mc.HILLS
-
 
 
 def normalizeAddExtras():
@@ -5889,10 +5589,9 @@ def generatePlotTypes():
     hm.calculateSeaLevel()
     hm.fillInLakes()
     pb.breakPangaeas()
-    ##    hm.Erode()
-    ##    hm.printHeightMap()
+
     hm.addWaterBands()
-    ##    hm.printHeightMap()
+
     cm.createClimateMaps()
     sm.initialize()
     rm.generateRiverMap()
@@ -5954,8 +5653,6 @@ def addRivers():
     for y in range(mc.height):
         for x in range(mc.width):
             placeRiversInPlot(x, y)
-
-    ##    rm.printRiverAndTerrainAlign()
 
     # peaks and rivers don't always mix well graphically, so lets eliminate
     # these potential glitches. Basically if there are adjacent peaks on both
@@ -6027,15 +5724,13 @@ def placeRiversInPlot(x, y):
             plot.setNOfRiver(True, CardinalDirectionTypes.CARDINALDIRECTION_WEST)
 
 
-"""
-This function examines a lake area and removes ugly surrounding rivers. Any
-river that is flowing away from the lake, or alongside the lake will be
-removed. This function also returns a list of riverID's that flow into the
-lake.
-"""
-
-
 def cleanUpLake(x, y):
+    """
+    This function examines a lake area and removes ugly surrounding rivers. Any
+    river that is flowing away from the lake, or alongside the lake will be
+    removed. This function also returns a list of riverID's that flow into the
+    lake.
+    """
     gc = CyGlobalContext()
     mmap = gc.getMap()
     riversIntoLake = list()
@@ -6095,15 +5790,13 @@ def cleanUpLake(x, y):
     return riversIntoLake
 
 
-"""
-This function replaces rivers to update the river crossings after a lake or
-channel is placed at X,Y. There had been a long standing problem where water tiles
-added after a river were causing graphical glitches and incorrect river rules
-due to not updating the river crossings.
-"""
-
-
 def replaceRivers(x, y):
+    """
+    This function replaces rivers to update the river crossings after a lake or
+    channel is placed at X,Y. There had been a long standing problem where water tiles
+    added after a river were causing graphical glitches and incorrect river rules
+    due to not updating the river crossings.
+    """
     gc = CyGlobalContext()
     mmap = gc.getMap()
     plot = mmap.plot(x, y + 1)  # North
@@ -6152,14 +5845,12 @@ def replaceRivers(x, y):
     return
 
 
-"""
-It looks bad to have a lake, fed by a river, sitting right next to the coast.
-This function tries to minimize that occurance by replacing it with a
-natural harbor, which looks much better.
-"""
-
-
 def makeHarbor(x, y, oceanMap):
+    """
+    It looks bad to have a lake, fed by a river, sitting right next to the coast.
+    This function tries to minimize that occurance by replacing it with a
+    natural harbor, which looks much better.
+    """
     oceanID = oceanMap.getOceanID()
     i = oceanMap.getIndex(x, y)
     if oceanMap.areaMap[i] != oceanID:
@@ -6299,9 +5990,8 @@ def expandLake(x, y, riversIntoLake, oceanMap):
     lakeSize = max(3, int(drainage * mc.LakeSizePerDrainage * desertModifier))
     start = LakePlot(x, y, sm.heightMap[i])
     lakeNeighbors.append(start)
-    #    print "lakeSize",lakeSize
+
     while lakeSize > 0 and len(lakeNeighbors) > 0:
-        #        lakeNeighbors.sort(key=operator.attrgetter('altitude'),reverse=False)
         lakeNeighbors.sort(lambda x, y: cmp(x.altitude, y.altitude))
         currentLakePlot = lakeNeighbors[0]
         del lakeNeighbors[0]
@@ -6339,15 +6029,11 @@ def expandLake(x, y, riversIntoLake, oceanMap):
                 for n in range(len(oceanMap.areaList)):
                     if oceanMap.areaList[n].ID == areaID:
                         if oceanMap.areaList[n].water == True:
-                            #                            print "lake touched waterID = %(id)3d with %(ls)3d squares unused" % {'id':areaID,'ls':lakeSize}
-                            #                            print "n = %(n)3d" % {"n":n}
-                            #                            print str(oceanMap.areaList[n])
                             return
                 if rm.riverMap[ii] != rm.L and mmap.plot(xx, yy).isWater() == False:
                     lakeNeighbors.append(LakePlot(xx, yy, sm.heightMap[ii]))
 
         lakeSize -= 1
-    #    print "lake finished normally at %(x)2d,%(y)2d" % {"x":x,"y":y}
     return
 
 
@@ -6356,11 +6042,10 @@ def addLakes():
     gc = CyGlobalContext()
     mmap = gc.getMap()
     terrainCoast = gc.getInfoTypeForString("TERRAIN_COAST")
-    #    PrintFlowMap()
+
     oceanMap = Areamap(mc.width, mc.height, True, True)
     oceanMap.defineAreas(isSmallWaterMatch)
-    ##    oceanMap.PrintList(oceanMap.areaList)
-    ##    oceanMap.PrintAreaMap()
+
     for y in range(mc.height):
         for x in range(mc.width):
             i = GetIndex(x, y)
@@ -6368,11 +6053,6 @@ def addLakes():
                 riversIntoLake = cleanUpLake(x, y)
                 plot = mmap.plot(x, y)
                 if len(riversIntoLake) > 0:
-                    ##                    plot.setRiverID(-1)
-                    ##                    plot.setNOfRiver(False,CardinalDirectionTypes.NO_CARDINALDIRECTION)
-                    ##                    plot.setWOfRiver(False,CardinalDirectionTypes.NO_CARDINALDIRECTION)
-                    ##                    #plot.setPlotType(PlotTypes.PLOT_OCEAN,True,True) setTerrain handles this already
-                    ##                    plot.setTerrainType(terrainCoast,True,True)
                     expandLake(x, y, riversIntoLake, oceanMap)
                 else:
                     # no lake here, but in that case there should be no rivers either
@@ -6380,8 +6060,7 @@ def addLakes():
                     plot.setNOfRiver(False, CardinalDirectionTypes.NO_CARDINALDIRECTION)
                     plot.setWOfRiver(False, CardinalDirectionTypes.NO_CARDINALDIRECTION)
     oceanMap.defineAreas(isSmallWaterMatch)
-    ##    oceanMap.PrintList(oceanMap.areaList)
-    ##    oceanMap.PrintAreaMap()
+
     for y in range(mc.height):
         for x in range(mc.width):
             i = GetIndex(x, y)
@@ -6405,8 +6084,6 @@ def addFeatures():
 
     createIce()
     # Now plant forest or jungle
-    ##    PrintTempMap(tm,tm.tempMap)
-    ##    PrintRainMap(rm,rm.rainMap,False)
     for y in range(mc.height):
         for x in range(mc.width):
             i = GetIndex(x, y)
@@ -6467,23 +6144,16 @@ def addFeatures():
                                 sm.terrainMap[ii] != mc.DESERT
                                 and sm.plotMap[ii] != mc.PEAK
                             ):
-                                # print "non desert neighbor"
                                 foundNonDesert = True
                             elif surPlot == 0:
-                                # print "neighbor off map"
                                 foundNonDesert = True
                             elif surPlot.isWater() == True:
-                                # print "water neighbor"
                                 foundNonDesert = True
                             elif surPlot.getFeatureType() == featureOasis:
-                                # print "oasis neighbor"
                                 foundNonDesert = True
                     if foundNonDesert == False:
                         if PRand.random() < mc.OasisChance:
-                            # print "placing oasis"
                             plot.setFeatureType(featureOasis, 0)
-                    # else:
-                    # print "oasis failed random check"
     return
 
 
@@ -6580,34 +6250,3 @@ def beforeInit():
     print "Initializing Custom Map Options"
     mc.initialize()
     mc.initInGameOptions()
-
-
-##mc.initialize()
-##PRand.seed()
-##hm.performTectonics()
-##hm.generateHeightMap()
-##hm.combineMaps()
-##hm.calculateSeaLevel()
-####hm.printHeightMap()
-##hm.fillInLakes()
-##pb.breakPangaeas()
-####hm.printHeightMap()
-####hm.Erode()
-##hm.printHeightMap()
-##hm.addWaterBands()
-##cm.createClimateMaps()
-##cm.printTempMap(cm.summerTempsMap)
-##cm.printTempMap(cm.winterTempsMap)
-##cm.printTempMap(cm.averageTempMap)
-##cm.printRainFallMap(False)
-##cm.printRainFallMap(True)
-##sm.initialize()
-##rm.generateRiverMap()
-####sm.printHeightMap()
-####rm.printRiverMap()
-####sm.printPlotMap()
-##sm.printTerrainMap()
-##rm.printFlowMap()
-##rm.printRiverMap()
-##rm.printRiverAndTerrainAlign()
-##sm.printHeightMap()
