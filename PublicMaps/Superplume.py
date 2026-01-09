@@ -190,7 +190,7 @@ class MapConstants:
         ## GLOBAL TUNING VARIABLES: Change these to customize the map results
 
         # Percent of land vs. water
-        self.landPercent = 0.29
+        self.landPercent = 0.28
 
         # If this variable is set to False, a shower of colossal meteors will attempt to
         # break up any pangea-like continents. Setting this variable to True will allow
