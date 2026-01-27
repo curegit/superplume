@@ -5300,8 +5300,7 @@ def getDescription():
     For no description return an empty string.
     """
     return (
-        "Random map that simulates earth-like plate tectonics, "
-        + "geostrophic and monsoon winds and rainfall."
+        "Random map script, forked from Perfect World 2, that simulates Earth-like plate tectonics, geostrophic, and monsoon winds and rainfall."
     )
 
 
