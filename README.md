@@ -6,11 +6,11 @@ This is yet another trivial fork of the map script Perfect World 2 for Civilizat
 
 ## Changes
 
-- Place glaciers along the northern and southern edges, as in the official maps.
-- Prevent peaks from being next to oceans.
-- Ensure that every sea resource is accessible from the coast.
-- Simplify the code by removing unnecessary definitions and lines.
-- Formatted the code by using Black to make it easier to maintain.
+- Place glaciers along the northern and southern edges, as in the official maps
+- Prevent peaks from being next to oceans
+- Ensure that every sea resource is accessible from the coast
+- Simplify the code by removing unnecessary definitions and lines
+- Formatted the code by using Black to make it easier to maintain
 - Minor bug fixes
 
 ## License
@@ -19,4 +19,4 @@ This is yet another trivial fork of the map script Perfect World 2 for Civilizat
 
 ## Development Notes
 
-The game's map scripting reference is located at: `Assets\Python\EntryPoints\CvMapScriptInterface.py`.
+The game's map scripting reference is located at: `Assets\Python\EntryPoints\CvMapScriptInterface.py`
