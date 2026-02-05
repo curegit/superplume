@@ -5299,9 +5299,7 @@ def getDescription():
     A map's Description is displayed in the main menu when players go to begin a game.
     For no description return an empty string.
     """
-    return (
-        "Random map script, forked from Perfect World 2, that simulates Earth-like plate tectonics, geostrophic, and monsoon winds and rainfall."
-    )
+    return "Random map script, forked from Perfect World 2, that simulates Earth-like plate tectonics, geostrophic, and monsoon winds and rainfall."
 
 
 def getWrapX():
